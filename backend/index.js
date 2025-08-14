@@ -1,6 +1,8 @@
 import "dotenv/config";
 import express from "express";
+
 import connectDB from "./utils/connectDB.util.js";
+import authRouter from "./routes/auth.route.js";
 
 const app = express();
 
@@ -9,6 +11,8 @@ const port = process.env.PORT;
 app.get("/", (req, res) => {
   res.json({ resStatus: true, message: "Welcome to Notestracker API" });
 });
+
+app.use("/api/auth/", authRouter);
 
 app.all(/^/, (_, res) => {
   res.status(404).json({ resStatus: false, error: "Route not found" });
