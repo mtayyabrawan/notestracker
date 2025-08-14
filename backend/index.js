@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import connectDB from "./utils/connectDB.util.js";
 
 const app = express();
 
@@ -13,7 +14,11 @@ app.all(/^/, (_, res) => {
   res.status(404).json({ resStatus: false, error: "Route not found" });
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.clear();
-  console.log({ response: `Server running on http://localhost:${port}` });
+  await connectDB();
+  console.log({
+    response: true,
+    message: `Server running on http://localhost:${port}`,
+  });
 });
