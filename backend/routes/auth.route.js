@@ -39,7 +39,9 @@ authRouter.post(
       return res.status(400).json({ resStatus: false, errors: result.array() });
     const { name, username, email, password, gender, birthdate } = req.body;
     const data = { name, username, email, password, gender, birthdate };
-    const userExist = await User.findOne({ username: username, email: email });
+    const userExist = await User.findOne({
+      $or: [{ username: username }, { email: email }],
+    });
     if (userExist)
       return res
         .status(409)
