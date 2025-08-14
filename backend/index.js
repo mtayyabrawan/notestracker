@@ -1,5 +1,7 @@
 import "dotenv/config";
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import connectDB from "./utils/connectDB.util.js";
 import authRouter from "./routes/auth.route.js";
@@ -7,6 +9,10 @@ import authRouter from "./routes/auth.route.js";
 const app = express();
 
 const port = process.env.PORT;
+
+app.use(cors({ origin: "*", credentials: true }));
+app.use(cookieParser());
+app.use(express.json({ limit: "10kb" }));
 
 app.get("/", (req, res) => {
   res.json({ resStatus: true, message: "Welcome to Notestracker API" });
