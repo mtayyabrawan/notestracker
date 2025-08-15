@@ -9,17 +9,7 @@ const twoFASchema = new Schema({
   },
   secret: {
     type: String,
-    required: function () {
-      if (this.status === "verified") return true;
-      return false;
-    },
-  },
-  tempSecret: {
-    type: String,
-    required: function () {
-      if (this.status === "pending") return true;
-      return false;
-    },
+    required: true,
   },
   status: {
     type: String,
