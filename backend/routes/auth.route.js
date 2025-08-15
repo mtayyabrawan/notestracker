@@ -165,4 +165,17 @@ authRouter.get(
   }),
 );
 
+authRouter.delete(
+  "/delete-account",
+  verifyLogin,
+  asyncWrapper(async (req, res) => {
+    const userId = req.user.id;
+    await User.findByIdAndDelete(userId);
+    res.clearCookie("notestraker_login_token");
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Account deleted successfully" });
+  }),
+);
+
 export default authRouter;
