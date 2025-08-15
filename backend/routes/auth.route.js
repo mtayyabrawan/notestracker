@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import mailor from "../utils/mailor.util.js";
 import { genLoginToken, genVerificationToken } from "../utils/tokenGen.util.js";
+import { verifyValidationToken } from "../utils/verifyTokens.util.js";
 
 const baseUrl = process.env.BASE_URL;
 
@@ -121,6 +122,36 @@ authRouter.post(
       secure: true,
     });
     res.status(200).json({ resStatus: true, message: "Login successful" });
+  }),
+);
+
+authRouter.get(
+  "/verify-email/:token",
+  param("token").isJWT().withMessage("Token is required"),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { token } = req.params;
+    const decoded = verifyValidationToken(token);
+    if (!decoded) {
+      return res.status(400).json({ resStatus: false, error: "Invalid token" });
+    }
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ resStatus: false, error: "User not found" });
+    }
+    if (user.isVerified)
+      return res
+        .status(400)
+        .json({ resStatus: false, error: "User already verified" });
+    user.isVerified = true;
+    await user.save();
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Email verified successfully" });
   }),
 );
 
