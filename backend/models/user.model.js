@@ -1,29 +1,5 @@
 import { model, Schema } from "mongoose";
 
-const tfaSchema = new Schema(
-  {
-    enabled: {
-      type: Boolean,
-      default: false,
-    },
-    tfaSecret: {
-      status: {
-        type: String,
-        enum: ["pending", "verified"],
-        default: "pending",
-      },
-      secretKey: {
-        type: String,
-        required: function () {
-          return this.enabled && this.tfaSecret.status === "verified";
-        },
-        trim: true,
-      },
-    },
-  },
-  { _id: false },
-);
-
 const userSchema = new Schema(
   {
     name: {
@@ -62,7 +38,12 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
-    two_factor_authentication: tfaSchema,
+    twoFA: {
+      type: String,
+      enum: ["disabled", "enabled", "pending"],
+      required: true,
+      default: "disabled",
+    },
   },
   { timestamps: true },
 );
