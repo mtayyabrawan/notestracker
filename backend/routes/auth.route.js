@@ -7,6 +7,7 @@ import asyncWrapper from "../utils/asyncWraper.util.js";
 import mailor from "../utils/mailor.util.js";
 import { genLoginToken, genVerificationToken } from "../utils/tokenGen.util.js";
 import { verifyValidationToken } from "../utils/verifyTokens.util.js";
+import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 
 const baseUrl = process.env.BASE_URL;
 
@@ -152,6 +153,15 @@ authRouter.get(
     res
       .status(200)
       .json({ resStatus: true, message: "Email verified successfully" });
+  }),
+);
+
+authRouter.get(
+  "/logout",
+  verifyLogin,
+  asyncWrapper(async (req, res) => {
+    res.clearCookie("notestraker_login_token");
+    res.status(200).json({ resStatus: true, message: "Logout successful" });
   }),
 );
 
