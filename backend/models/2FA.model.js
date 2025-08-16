@@ -8,7 +8,7 @@ const twoFASchema = new Schema({
     ref: "user",
   },
   secret: {
-    type: String,
+    type: Object,
     required: true,
   },
   status: {
