@@ -53,7 +53,9 @@ twoFARouter.post(
         encoding: "base32",
       });
       const qrcodeUrl = await qrcode.toDataURL(otpAuthURL);
-      return res.status(200).json({ resStatus: true, qrcodeUrl });
+      return res
+        .status(200)
+        .json({ resStatus: true, qrcodeUrl, secret: decryptedSecret });
     }
     const twoFASecret = speakeasy.generateSecret({
       length: 20,
@@ -68,7 +70,9 @@ twoFARouter.post(
     });
     await user.save();
     const qrcodeUrl = await qrcode.toDataURL(twoFASecret.otpauth_url);
-    res.status(200).json({ resStatus: true, qrcodeUrl });
+    res
+      .status(200)
+      .json({ resStatus: true, qrcodeUrl, secret: twoFASecret.base32 });
   }),
 );
 
