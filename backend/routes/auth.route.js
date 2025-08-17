@@ -284,4 +284,56 @@ authRouter.post(
   }),
 );
 
+authRouter.post(
+  "/change-password",
+  verifyLogin,
+  [
+    body("oldPassword")
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 4,
+        minUppercase: 1,
+        minNumbers: 2,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "Old Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+      ),
+    body("newPassword")
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 4,
+        minUppercase: 1,
+        minNumbers: 2,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "New Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+      ),
+  ],
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+    const compareOldPassword = bcrypt.compareSync(oldPassword, user.password);
+    const compareNewPassword = bcrypt.compareSync(newPassword, user.password);
+    if (!compareOldPassword)
+      return res
+        .status(401)
+        .json({ resStatus: false, error: "Invalid old password" });
+    if (compareNewPassword)
+      return res.status(400).json({
+        resStatus: false,
+        error: "New password cannot be same as old password",
+      });
+    user.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10));
+    await user.save();
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Password changed successfully" });
+  }),
+);
+
 export default authRouter;
