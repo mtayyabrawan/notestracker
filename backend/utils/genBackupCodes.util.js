@@ -5,9 +5,9 @@ function generateBackupCodes() {
   const backupCodes = [];
   const hashedBackupCodes = [];
   for (let i = 0; i < 5; i++) {
-    const code = crypto.randomBytes(8).toString("hex");
+    const code = crypto.randomInt(100000, 999999).toString();
     backupCodes.push(code);
-    hashedBackupCodes.push(bcrypt.hashSync(code, bcrypt.genSaltSync(10)));
+    hashedBackupCodes.push(bcrypt.hashSync(`${code}`, bcrypt.genSaltSync(10)));
   }
   return { backupCodes, hashedBackupCodes };
 }
