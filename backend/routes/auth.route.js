@@ -6,6 +6,7 @@ import User from "../models/user.model.js";
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import mailor from "../utils/mailor.util.js";
 import {
+  gen2FALoginToken,
   genLoginToken,
   genResetToken,
   genVerificationToken,
@@ -121,6 +122,20 @@ authRouter.post(
         },
       );
     }
+    if (userExist.twoFA === "enabled") {
+      const notestraker_2fa_login_token = gen2FALoginToken(
+        userExist._id.toString(),
+      );
+      res.cookie("notestraker_2fa_login_token", notestraker_2fa_login_token, {
+        httpOnly: true,
+        secure: true,
+      });
+      return res.status(200).json({
+        resStatus: true,
+        twoFA: true,
+        message: "Enter OTP for 2FA using your authenticator app",
+      });
+    }
     const notestraker_login_token = genLoginToken(
       userExist._id.toString(),
       userExist.email,
@@ -129,7 +144,9 @@ authRouter.post(
       httpOnly: true,
       secure: true,
     });
-    res.status(200).json({ resStatus: true, message: "Login successful" });
+    res
+      .status(200)
+      .json({ resStatus: true, twoFA: false, message: "Login successful" });
   }),
 );
 
