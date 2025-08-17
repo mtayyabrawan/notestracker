@@ -13,6 +13,7 @@ import { genLoginToken } from "../utils/tokenGen.util.js";
 import verifyTempLogin from "../middlewares/verifyTempLogin.middleware.js";
 import BackupCode from "../models/backupCode.model.js";
 import generateBackupCodes from "../utils/genBackupCodes.util.js";
+import compareBackupCode from "../utils/compareBC.util.js";
 
 const twoFARouter = Router();
 
@@ -245,6 +246,55 @@ twoFARouter.get(
       message: "Backup codes generated successfully",
       backupCodes,
     });
+  }),
+);
+
+twoFARouter.post(
+  "/verify-backup-code",
+  verifyTempLogin,
+  body("backupCode")
+    .isNumeric()
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Backup code must be a 6-digit number"),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { backupCode } = req.body;
+    const user = await User.findById(req.user.id);
+    if (user.twoFA !== "enabled")
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "2FA is not enabled" });
+    const backupCodeDoc = await BackupCode.findOne({ userId: user._id });
+    if (!backupCodeDoc)
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "Backup codes not found" });
+    const { code, matched } = compareBackupCode(backupCode, [
+      backupCodeDoc.code1,
+      backupCodeDoc.code2,
+      backupCodeDoc.code3,
+      backupCodeDoc.code4,
+      backupCodeDoc.code5,
+    ]);
+    if (!matched)
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "Invalid backup code" });
+    backupCodeDoc[`code${code}`].used = true;
+    await backupCodeDoc.save();
+    const notestraker_login_token = genLoginToken(
+      user._id.toString(),
+      user.email,
+    );
+    res.cookie("notestraker_login_token", notestraker_login_token, {
+      httpOnly: true,
+      secure: true,
+    });
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Backup code verified successfully" });
   }),
 );
 
