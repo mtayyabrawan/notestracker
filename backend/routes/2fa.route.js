@@ -15,7 +15,6 @@ const twoFARouter = Router();
 twoFARouter.post(
   "/enable",
   verifyLogin,
-
   body("password")
     .isStrongPassword({
       minLength: 8,
@@ -68,6 +67,48 @@ twoFARouter.post(
     await user.save();
     const qrcodeUrl = await qrcode.toDataURL(twoFASecret.otpauth_url);
     res.status(200).json({ resStatus: true, qrcodeUrl });
+  }),
+);
+
+twoFARouter.post(
+  "/verify-2fa",
+  verifyLogin,
+  body("otpCode")
+    .isNumeric({ no_symbols: true })
+    .isLength({ min: 6, max: 6 })
+    .withMessage("OTP code must be a 6-digit number"),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const user = await User.findById(req.user.id);
+    if (user.twoFA === "enabled")
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "2FA is already enabled" });
+    if (user.twoFA === "disabled")
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "2FA is not enabled" });
+    const { otpCode } = req.body;
+    const user2FA = await TwoFA.findOne({ userId: user._id });
+    const decryptedSecret = decrypt(user2FA.secret);
+    const verified = speakeasy.totp.verify({
+      secret: decryptedSecret,
+      encoding: "base32",
+      token: otpCode,
+    });
+    if (!verified)
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "Invalid OTP code" });
+    user.twoFA = "enabled";
+    user2FA.status = "verified";
+    await user2FA.save();
+    await user.save();
+    res
+      .status(200)
+      .json({ resStatus: true, message: "2FA enabled successfully" });
   }),
 );
 
