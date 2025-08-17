@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 const jwtValidationSecret = process.env.JWT_VALIDATION_SECRET;
 const jwtLoginSecret = process.env.JWT_LOGIN_SECRET;
 const jwtResetSecret = process.env.JWT_RESET_SECRET;
+const jwt2FALoginSecret = process.env.JWT_2FA_LOGIN_SECRET;
 
 export function verifyValidationToken(token) {
   try {
@@ -31,6 +32,18 @@ export function verifyLoginToken(token) {
 export function verifyResetToken(token) {
   try {
     return jwt.verify(token, jwtResetSecret);
+  } catch (error) {
+    return new Error({
+      resStatus: false,
+      error: "Invalid or expired token",
+      message: error.message,
+    });
+  }
+}
+
+export function verify2FALoginToken(token) {
+  try {
+    return jwt.verify(token, jwt2FALoginSecret);
   } catch (error) {
     return new Error({
       resStatus: false,
