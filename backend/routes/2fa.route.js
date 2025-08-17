@@ -7,7 +7,7 @@ import { body, validationResult } from "express-validator";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import User from "../models/user.model.js";
-import { encrypt } from "../utils/encryption.util.js";
+import { decrypt, encrypt } from "../utils/encryption.util.js";
 import TwoFA from "../models/2FA.model.js";
 
 const twoFARouter = Router();
@@ -38,13 +38,26 @@ twoFARouter.post(
       return res
         .status(401)
         .json({ resStatus: false, message: "Invalid password" });
-    if (user.twoFA === "enabled" || user.twoFA === "pending")
+    if (user.twoFA === "enabled")
       return res
         .status(400)
         .json({ resStatus: false, message: "2FA is already enabled" });
+    if (user.twoFA === "pending") {
+      const user2FA = await TwoFA.findOne({ userId: user._id });
+      const decryptedSecret = decrypt(user2FA.secret);
+      const otpAuthURL = speakeasy.otpauthURL({
+        secret: decryptedSecret,
+        label: `Notestaker (${user.email})`,
+        issuer: "Notestaker",
+        encoding: "base32",
+      });
+      const qrcodeUrl = await qrcode.toDataURL(otpAuthURL);
+      return res.status(200).json({ resStatus: true, qrcodeUrl });
+    }
     const twoFASecret = speakeasy.generateSecret({
       length: 20,
       name: `Notestaker (${user.email})`,
+      issuer: "Notestaker",
     });
     const encryptedSecret = encrypt(twoFASecret.base32);
     user.twoFA = "pending";
