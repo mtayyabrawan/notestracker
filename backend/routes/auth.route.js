@@ -10,7 +10,10 @@ import {
   genResetToken,
   genVerificationToken,
 } from "../utils/tokenGen.util.js";
-import { verifyValidationToken } from "../utils/verifyTokens.util.js";
+import {
+  verifyResetToken,
+  verifyValidationToken,
+} from "../utils/verifyTokens.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 
 const baseUrl = process.env.BASE_URL;
@@ -214,6 +217,53 @@ authRouter.post(
         });
       },
     );
+  }),
+);
+
+authRouter.post(
+  "/reset-password/:token",
+  [
+    param("token").isJWT().withMessage("Token is required"),
+    body("password")
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 4,
+        minUppercase: 1,
+        minNumbers: 2,
+        minSymbols: 1,
+      })
+      .withMessage(
+        "Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+      ),
+  ],
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { token } = req.params;
+    const { password } = req.body;
+    const decoded = verifyResetToken(token);
+    if (!decoded || decoded instanceof Error) {
+      return res.status(400).json({ resStatus: false, error: "Invalid token" });
+    }
+    const user = await User.findOne({ email: decoded.email });
+    if (!user) {
+      return res
+        .status(404)
+        .json({ resStatus: false, error: "User not found" });
+    }
+    const compareOldPassword = bcrypt.compareSync(password, user.password);
+    if (compareOldPassword) {
+      return res.status(400).json({
+        resStatus: false,
+        error: "New password cannot be same as old password",
+      });
+    }
+    user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+    await user.save();
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Password reset successful" });
   }),
 );
 
