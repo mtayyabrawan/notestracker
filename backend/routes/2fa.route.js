@@ -9,6 +9,8 @@ import asyncWrapper from "../utils/asyncWraper.util.js";
 import User from "../models/user.model.js";
 import { decrypt, encrypt } from "../utils/encryption.util.js";
 import TwoFA from "../models/2FA.model.js";
+import { genLoginToken } from "../utils/tokenGen.util.js";
+import verifyTempLogin from "../middlewares/verifyTempLogin.middleware.js";
 
 const twoFARouter = Router();
 
@@ -147,6 +149,48 @@ twoFARouter.post(
     res
       .status(200)
       .json({ resStatus: true, message: "2FA disabled successfully" });
+  }),
+);
+
+twoFARouter.post(
+  "/verify-otp",
+  verifyTempLogin,
+  body("otpCode")
+    .isNumeric({ no_symbols: true })
+    .isLength({ min: 6, max: 6 })
+    .withMessage("OTP code must be a 6-digit number"),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { otpCode } = req.body;
+    const user = await User.findById(req.user.id);
+    if (user.twoFA !== "enabled")
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "2FA is not enabled" });
+    const user2FA = await TwoFA.findOne({ userId: user._id });
+    const decryptedSecret = decrypt(user2FA.secret);
+    const verified = speakeasy.totp.verify({
+      secret: decryptedSecret,
+      encoding: "base32",
+      token: otpCode,
+    });
+    if (!verified)
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "Invalid OTP code" });
+    const notestraker_login_token = genLoginToken(
+      user._id.toString(),
+      user.email,
+    );
+    res.cookie("notestraker_login_token", notestraker_login_token, {
+      httpOnly: true,
+      secure: true,
+    });
+    res
+      .status(200)
+      .json({ resStatus: true, message: "OTP verified successfully" });
   }),
 );
 
