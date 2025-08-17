@@ -112,4 +112,42 @@ twoFARouter.post(
   }),
 );
 
+twoFARouter.post(
+  "/disable",
+  verifyLogin,
+  body("password")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 4,
+      minUppercase: 1,
+      minNumbers: 2,
+      minSymbols: 1,
+    })
+    .withMessage(
+      "Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+    ),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const user = await User.findById(req.user.id);
+    if (user.twoFA === "disabled")
+      return res
+        .status(400)
+        .json({ resStatus: false, message: "2FA is already disabled" });
+    const { password } = req.body;
+    const comparePassword = bcrypt.compareSync(password, user.password);
+    if (!comparePassword)
+      return res
+        .status(401)
+        .json({ resStatus: false, message: "Invalid password" });
+    user.twoFA = "disabled";
+    await TwoFA.findOneAndDelete({ userId: user._id });
+    await user.save();
+    res
+      .status(200)
+      .json({ resStatus: true, message: "2FA disabled successfully" });
+  }),
+);
+
 export default twoFARouter;
