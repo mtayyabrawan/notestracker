@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./utils/connectDB.util.js";
 import authRouter from "./routes/auth.route.js";
 import twoFARouter from "./routes/2fa.route.js";
+import notesRouter from "./routes/notes.route.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth/", authRouter);
 app.use("/api/2fa/", twoFARouter);
+app.use("/api/notes/", notesRouter);
 
 app.all(/^/, (_, res) => {
   res.status(404).json({ resStatus: false, error: "Route not found" });
