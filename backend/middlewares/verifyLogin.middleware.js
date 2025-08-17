@@ -8,6 +8,9 @@ async function verifyLogin(req, res, next) {
   }
   try {
     const decoded = verifyLoginToken(token);
+    if (!decoded || decoded instanceof Error) {
+      return res.status(401).json({ resStatus: false, error: "Unauthorized" });
+    }
     const { id, email } = decoded;
     const userExist = await User.findById(id);
     if (!userExist || !userExist.isVerified)

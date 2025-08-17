@@ -142,7 +142,7 @@ authRouter.get(
       return res.status(400).json({ resStatus: false, errors: result.array() });
     const { token } = req.params;
     const decoded = verifyValidationToken(token);
-    if (!decoded) {
+    if (!decoded || decoded instanceof Error) {
       return res.status(400).json({ resStatus: false, error: "Invalid token" });
     }
     const user = await User.findById(decoded.id);
