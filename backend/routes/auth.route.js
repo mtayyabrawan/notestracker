@@ -16,6 +16,8 @@ import {
   verifyValidationToken,
 } from "../utils/verifyTokens.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
+import TwoFA from "../models/2FA.model.js";
+import BackupCode from "../models/backupCode.model.js";
 
 const baseUrl = process.env.BASE_URL;
 
@@ -194,6 +196,8 @@ authRouter.delete(
   verifyLogin,
   asyncWrapper(async (req, res) => {
     const userId = req.user.id;
+    await TwoFA.findOneAndDelete({ userId: userId });
+    await BackupCode.findOneAndDelete({ userId: userId });
     await User.findByIdAndDelete(userId);
     res.clearCookie("notestraker_login_token");
     res
