@@ -5,7 +5,11 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import mailor from "../utils/mailor.util.js";
-import { genLoginToken, genVerificationToken } from "../utils/tokenGen.util.js";
+import {
+  genLoginToken,
+  genResetToken,
+  genVerificationToken,
+} from "../utils/tokenGen.util.js";
 import { verifyValidationToken } from "../utils/verifyTokens.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 
@@ -99,7 +103,7 @@ authRouter.post(
           from: process.env.GMAIL_USER,
           to: userExist.email,
           subject: "Verify your email",
-          text: `Please verify your email by clicking on the following link: ${baseUrl}/auth/verify-email/${validationToken}`,
+          html: `<p>Please verify your email by clicking on the following link: ${baseUrl}/auth/verify-email/${validationToken}<br>This link expires in 1 Day<p>`,
         },
         (error, msg) => {
           if (error)
@@ -175,6 +179,41 @@ authRouter.delete(
     res
       .status(200)
       .json({ resStatus: true, message: "Account deleted successfully" });
+  }),
+);
+
+authRouter.post(
+  "/forgot-password",
+  body("email").isEmail().withMessage("Invalid email format"),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { email } = req.body;
+    const userExist = await User.findOne({ email: email });
+    if (!userExist)
+      return res
+        .status(404)
+        .json({ resStatus: false, error: "User not found" });
+    const resetToken = genResetToken(userExist.email);
+    return mailor.sendMail(
+      {
+        to: userExist.email,
+        subject: "Reset your password",
+        html: `<p>Please reset your password by clicking on the following link: <a href="${baseUrl}/auth/reset-password/${resetToken}">Reset Password</a><br>This Link Expires in 1 Hour</p>`,
+      },
+      (error, msg) => {
+        if (error)
+          return res
+            .status(500)
+            .json({ resStatus: false, error: error.message });
+        return res.json({
+          resStatus: true,
+          message:
+            "Password reset link sent to your email. Please check your inbox.",
+        });
+      },
+    );
   }),
 );
 
