@@ -32,7 +32,7 @@ const backupCodeSchema = new Schema({
     type: codeSchema,
     required: true,
   },
-  code4: {
+  code5: {
     type: codeSchema,
     required: true,
   },
@@ -40,6 +40,7 @@ const backupCodeSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "user",
     required: true,
+    unique: true,
   },
 });
 
