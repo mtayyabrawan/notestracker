@@ -152,6 +152,7 @@ twoFARouter.post(
         .json({ resStatus: false, message: "Invalid password" });
     user.twoFA = "disabled";
     await TwoFA.findOneAndDelete({ userId: user._id });
+    await BackupCode.findOneAndDelete({ userId: user._id });
     await user.save();
     res
       .status(200)
