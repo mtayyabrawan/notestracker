@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { body, param, validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
 
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
@@ -9,6 +10,7 @@ import {
   decryptNotes,
   encryptNote,
 } from "../utils/encryption.util.js";
+import User from "../models/user.model.js";
 
 const notesRouter = Router();
 
@@ -61,6 +63,38 @@ notesRouter.get(
         .json({ resStatus: false, error: "No notes found" });
     const decryptedNotes = decryptNotes(notes);
     res.status(200).json({ resStatus: true, notes: decryptedNotes });
+  }),
+);
+
+notesRouter.delete(
+  "/all",
+  verifyLogin,
+  body("password")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 4,
+      minUppercase: 1,
+      minNumbers: 2,
+      minSymbols: 1,
+    })
+    .withMessage(
+      "Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+    ),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { password } = req.body;
+    const user = await User.findById(req.user.id);
+    const comparePassword = bcrypt.compareSync(password, user.password);
+    if (!comparePassword)
+      return res
+        .status(401)
+        .json({ resStatus: false, error: "Invalid password" });
+    await Note.deleteMany({ author: req.user._id }).select(["-author", "-__v"]);
+    res
+      .status(200)
+      .json({ resStatus: true, message: "All notes deleted successfully" });
   }),
 );
 
