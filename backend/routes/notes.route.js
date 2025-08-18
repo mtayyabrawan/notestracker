@@ -39,7 +39,7 @@ notesRouter.post(
     const encrypted = encryptNote(title, content, tag);
     const data = {
       date: new Date().toLocaleString(),
-      author: req.user._id,
+      author: req.user.id,
       ...encrypted,
     };
     await Note.create(data);
@@ -53,7 +53,7 @@ notesRouter.get(
   "/all",
   verifyLogin,
   asyncWrapper(async (req, res) => {
-    const notes = await Note.find({ author: req.user._id }).select([
+    const notes = await Note.find({ author: req.user.id }).select([
       "-author",
       "-__v",
     ]);
@@ -91,7 +91,7 @@ notesRouter.delete(
       return res
         .status(401)
         .json({ resStatus: false, error: "Invalid password" });
-    await Note.deleteMany({ author: req.user._id }).select(["-author", "-__v"]);
+    await Note.deleteMany({ author: req.user.id }).select(["-author", "-__v"]);
     res
       .status(200)
       .json({ resStatus: true, message: "All notes deleted successfully" });
@@ -107,7 +107,7 @@ notesRouter.get(
     if (!result.isEmpty())
       return res.status(400).json({ resStatus: false, errors: result.array() });
     const note = await Note.findOne({
-      author: req.user._id,
+      author: req.user.id,
       _id: req.params.id,
     }).select(["-author", "-__v"]);
     if (!note)
@@ -130,7 +130,7 @@ notesRouter.delete(
     if (!result.isEmpty())
       return res.status(400).json({ resStatus: false, errors: result.array() });
     const note = await Note.findOneAndDelete({
-      author: req.user._id,
+      author: req.user.id,
       _id: req.params.id,
     }).select(["-author", "-__v"]);
     if (!note)
@@ -138,6 +138,56 @@ notesRouter.delete(
     res
       .status(200)
       .json({ resStatus: true, message: "Note deleted successfully" });
+  }),
+);
+
+notesRouter.put(
+  "/:id",
+  verifyLogin,
+  [
+    param("id").isMongoId(),
+    body("title")
+      .isString()
+      .matches(/^[a-zA-Z0-9 ]+$/)
+      .isLength({ min: 1, max: 100 })
+      .optional(),
+    body("content")
+      .isString()
+      .matches(/^[a-zA-Z0-9.,!?() ]+$/)
+      .isLength({ min: 1, max: 1000 })
+      .optional(),
+    body("tag")
+      .isString()
+      .matches(/^[a-zA-Z]+$/)
+      .isLength({ min: 1, max: 20 })
+      .optional(),
+  ],
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { id } = req.params;
+    const note = await Note.findById(id).select(["-__v"]);
+    if (!note || note.author.toString() !== req.user.id)
+      return res.status(404).json({ resStatus: false, error: "No note found" });
+    const decryptedNote = decryptNote(note.title, note.content, note.tag);
+    if (!req.body)
+      return res
+        .status(400)
+        .json({ resStatus: false, error: "No data provided for update" });
+    const { title, content, tag } = req.body;
+    const finalTitle = title ?? decryptedNote.title;
+    const finalContent = content ?? decryptedNote.content;
+    const finalTag = tag ?? decryptedNote.tag;
+    const encryptedNote = encryptNote(finalTitle, finalContent, finalTag);
+    note.title = encryptedNote.title;
+    note.content = encryptedNote.content;
+    note.tag = encryptedNote.tag;
+    await note.save();
+    res.status(200).json({
+      resStatus: true,
+      message: "Note updated successfully",
+    });
   }),
 );
 
