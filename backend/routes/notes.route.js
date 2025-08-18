@@ -58,7 +58,7 @@ notesRouter.get(
     if (!notes.length)
       return res
         .status(404)
-        .json({ resStatus: false, message: "No notes found" });
+        .json({ resStatus: false, error: "No notes found" });
     const decryptedNotes = decryptNotes(notes);
     res.status(200).json({ resStatus: true, notes: decryptedNotes });
   }),
@@ -69,20 +69,41 @@ notesRouter.get(
   verifyLogin,
   param("id").isMongoId(),
   asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
     const note = await Note.findOne({
       author: req.user._id,
       _id: req.params.id,
     }).select(["-author", "-__v"]);
     if (!note)
-      return res
-        .status(404)
-        .json({ resStatus: false, message: "No note found" });
+      return res.status(404).json({ resStatus: false, error: "No note found" });
     const decryptedNote = {
       _id: note._id,
       ...decryptNote(note.title, note.content, note.tag),
       date: note.date,
     };
     res.status(200).json({ resStatus: true, note: decryptedNote });
+  }),
+);
+
+notesRouter.delete(
+  "/:id",
+  verifyLogin,
+  param("id").isMongoId(),
+  asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const note = await Note.findOneAndDelete({
+      author: req.user._id,
+      _id: req.params.id,
+    }).select(["-author", "-__v"]);
+    if (!note)
+      return res.status(404).json({ resStatus: false, error: "No note found" });
+    res
+      .status(200)
+      .json({ resStatus: true, message: "Note deleted successfully" });
   }),
 );
 
