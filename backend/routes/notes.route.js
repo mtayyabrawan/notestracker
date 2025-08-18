@@ -4,7 +4,7 @@ import { body, validationResult } from "express-validator";
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 import Note from "../models/note.model.js";
-import { encryptNote } from "../utils/encryption.util.js";
+import { decryptNotes, encryptNote } from "../utils/encryption.util.js";
 
 const notesRouter = Router();
 
@@ -40,6 +40,23 @@ notesRouter.post(
     res
       .status(201)
       .json({ resStatus: true, message: "Note created successfully" });
+  }),
+);
+
+notesRouter.get(
+  "/all",
+  verifyLogin,
+  asyncWrapper(async (req, res) => {
+    const notes = await Note.find({ author: req.user._id }).select([
+      "-author",
+      "-__v",
+    ]);
+    if (!notes.length)
+      return res
+        .status(404)
+        .json({ resStatus: false, message: "No notes found" });
+    const decryptedNotes = decryptNotes(notes);
+    res.status(200).json({ resStatus: true, notes: decryptedNotes });
   }),
 );
 
