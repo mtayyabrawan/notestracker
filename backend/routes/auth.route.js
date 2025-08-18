@@ -18,6 +18,7 @@ import {
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 import TwoFA from "../models/2FA.model.js";
 import BackupCode from "../models/backupCode.model.js";
+import Note from "../models/note.model.js";
 
 const baseUrl = process.env.BASE_URL;
 
@@ -194,10 +195,32 @@ authRouter.get(
 authRouter.delete(
   "/delete-account",
   verifyLogin,
+  body("password")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 4,
+      minUppercase: 1,
+      minNumbers: 2,
+      minSymbols: 1,
+    })
+    .withMessage(
+      "Password must be at least 8 characters long consisting of at least 4 lowercase letters, 1 uppercase letter, 2 numbers, and 1 symbol",
+    ),
   asyncWrapper(async (req, res) => {
+    const result = validationResult(req);
+    if (!result.isEmpty())
+      return res.status(400).json({ resStatus: false, errors: result.array() });
+    const { password } = req.body;
     const userId = req.user.id;
+    const user = await User.findById(req.user.id);
+    const comparePassword = bcrypt.compareSync(password, user.password);
+    if (!comparePassword)
+      return res
+        .status(401)
+        .json({ resStatus: false, error: "Invalid password" });
     await TwoFA.findOneAndDelete({ userId: userId });
     await BackupCode.findOneAndDelete({ userId: userId });
+    await Note.deleteMany({ author: userId });
     await User.findByIdAndDelete(userId);
     res.clearCookie("notestraker_login_token");
     res
