@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 
 import asyncWrapper from "../utils/asyncWraper.util.js";
 import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 import Note from "../models/note.model.js";
-import { decryptNotes, encryptNote } from "../utils/encryption.util.js";
+import {
+  decryptNote,
+  decryptNotes,
+  encryptNote,
+} from "../utils/encryption.util.js";
 
 const notesRouter = Router();
 
@@ -57,6 +61,28 @@ notesRouter.get(
         .json({ resStatus: false, message: "No notes found" });
     const decryptedNotes = decryptNotes(notes);
     res.status(200).json({ resStatus: true, notes: decryptedNotes });
+  }),
+);
+
+notesRouter.get(
+  "/:id",
+  verifyLogin,
+  param("id").isMongoId(),
+  asyncWrapper(async (req, res) => {
+    const note = await Note.findOne({
+      author: req.user._id,
+      _id: req.params.id,
+    }).select(["-author", "-__v"]);
+    if (!note)
+      return res
+        .status(404)
+        .json({ resStatus: false, message: "No note found" });
+    const decryptedNote = {
+      _id: note._id,
+      ...decryptNote(note.title, note.content, note.tag),
+      date: note.date,
+    };
+    res.status(200).json({ resStatus: true, note: decryptedNote });
   }),
 );
 
