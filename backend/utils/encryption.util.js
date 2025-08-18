@@ -23,37 +23,24 @@ export function encrypt(text) {
 }
 
 export function encryptNote(title, content, noteTag) {
-  const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv(ALGO, noteKey, iv);
-  const encryptedTitle = Buffer.concat([
-    cipher.update(title, "utf8"),
-    cipher.final(),
-  ]);
-  const encryptedContent = Buffer.concat([
-    cipher.update(content, "utf8"),
-    cipher.final(),
-  ]);
-  const encryptedTag = Buffer.concat([
-    cipher.update(noteTag, "utf8"),
-    cipher.final(),
-  ]);
-  const tag = cipher.getAuthTag();
+  function encryptField(field) {
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv(ALGO, noteKey, iv);
+    const encrypted = Buffer.concat([
+      cipher.update(field, "utf8"),
+      cipher.final(),
+    ]);
+    const tag = cipher.getAuthTag();
+    return {
+      iv: iv.toString("hex"),
+      data: encrypted.toString("hex"),
+      tag: tag.toString("hex"),
+    };
+  }
   return {
-    title: {
-      iv: iv.toString("hex"),
-      data: encryptedTitle.toString("hex"),
-      tag: tag.toString("hex"),
-    },
-    content: {
-      iv: iv.toString("hex"),
-      data: encryptedContent.toString("hex"),
-      tag: tag.toString("hex"),
-    },
-    tag: {
-      iv: iv.toString("hex"),
-      data: encryptedTag.toString("hex"),
-      tag: tag.toString("hex"),
-    },
+    title: encryptField(title),
+    content: encryptField(content),
+    tag: encryptField(noteTag),
   };
 }
 
@@ -114,7 +101,7 @@ export function decryptNotes(notes) {
   for (const note of notes) {
     decryptedNotes.push({
       _id: note._id,
-      ...decryptNote(note.title, note.content, note.tag).title,
+      ...decryptNote(note.title, note.content, note.tag),
       date: note.date,
     });
   }
