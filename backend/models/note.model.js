@@ -5,7 +5,7 @@ const noteSchema = new Schema({
   content: { type: Object, required: true },
   tag: { type: Object, required: true },
   date: { type: String, required: true, trim: true },
-  author: { type: Schema.Types.ObjectId, ref: "user" },
+  author: { type: Schema.Types.ObjectId, ref: "user", required: true },
 });
 
 const Note = model("Note", noteSchema);
