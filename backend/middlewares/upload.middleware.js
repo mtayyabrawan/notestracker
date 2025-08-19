@@ -1,16 +1,37 @@
 import multer from "multer";
+
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
+  limits: { files: 1, fileSize: 1024 * 1024 },
   fileFilter: function (req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error("Only image files are allowed!"));
-    }
-    if (file.size > 1024 * 1024) {
-      return cb(new Error("File size must be less than 1MB!"));
+      return cb(
+        new multer.MulterError(
+          "LIMIT_UNEXPECTED_FILE",
+          "Only image files are allowed!",
+        ),
+      );
     }
     cb(null, true);
   },
 });
 
-export default upload;
+const uploadSingleAvatar = (req, res, next) => {
+  upload.single("avatar")(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      let message = "File upload error.";
+      if (err.code === "LIMIT_FILE_SIZE") {
+        message = "File size must be less than 1MB!";
+      } else if (err.code === "LIMIT_UNEXPECTED_FILE") {
+        message = err.message || "Only image files are allowed!";
+      }
+      return res.status(400).json({ resStatus: false, error: message });
+    } else if (err) {
+      return res.status(400).json({ resStatus: false, error: err.message });
+    }
+    next();
+  });
+};
+
+export default uploadSingleAvatar;

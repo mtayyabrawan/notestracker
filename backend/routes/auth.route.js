@@ -19,8 +19,11 @@ import verifyLogin from "../middlewares/verifyLogin.middleware.js";
 import TwoFA from "../models/2FA.model.js";
 import BackupCode from "../models/backupCode.model.js";
 import Note from "../models/note.model.js";
+import cloudinary from "../utils/cloudinary.util.js";
+import uploadSingleAvatar from "../middlewares/upload.middleware.js";
 
 const baseUrl = process.env.BASE_URL;
+const cloudinaryFolder = process.env.CLOUDINARY_FOLDER;
 
 const authRouter = Router();
 
@@ -360,6 +363,43 @@ authRouter.post(
     res
       .status(200)
       .json({ resStatus: true, message: "Password changed successfully" });
+  }),
+);
+
+authRouter.post(
+  "/upload-profile-picture",
+  verifyLogin,
+  uploadSingleAvatar,
+  asyncWrapper(async (req, res) => {
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ resStatus: false, error: "No file uploaded" });
+    }
+    const user = await User.findById(req.user.id);
+    cloudinary.uploader
+      .upload_stream(
+        {
+          folder: cloudinaryFolder,
+          resource_type: "image",
+          public_id: user.username,
+        },
+        async (error, result) => {
+          if (error) {
+            console.log(error);
+            return res
+              .status(500)
+              .json({ resStatus: false, error: "Upload failed" });
+          }
+          user.profilePicture = result.secure_url;
+          await user.save();
+          res.status(200).json({
+            resStatus: true,
+            message: "Profile picture uploaded successfully",
+          });
+        },
+      )
+      .end(req.file.buffer);
   }),
 );
 
