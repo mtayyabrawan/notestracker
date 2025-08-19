@@ -403,4 +403,34 @@ authRouter.post(
   }),
 );
 
+authRouter.delete(
+  "/profile-picture",
+  verifyLogin,
+  asyncWrapper(async (req, res) => {
+    const user = await User.findById(req.user.id);
+    if (!user.profilePicture)
+      return res
+        .status(400)
+        .json({ resStatus: false, error: "No profile picture found" });
+    cloudinary.uploader.destroy(
+      `${cloudinaryFolder}/${user.username}`,
+      (error, result) => {
+        if (error) {
+          console.log(error);
+          return res
+            .status(500)
+            .json({ resStatus: false, error: "Delete failed" });
+        }
+        user.profilePicture =
+          "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg";
+        user.save();
+        res.status(200).json({
+          resStatus: true,
+          message: "Profile picture deleted successfully",
+        });
+      },
+    );
+  }),
+);
+
 export default authRouter;
