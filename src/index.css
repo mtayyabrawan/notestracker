@@ -2,3 +2,8 @@
 *::-webkit-scrollbar {
   display: none;
 }
+* {
+  transition: all;
+  transition-timing-function: ease-in-out;
+  transition-duration: 700ms;
+}
