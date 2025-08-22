@@ -30,8 +30,7 @@ const registerSchema = z.object({
   gender: z.enum(["male", "female"], "Gender must be male or female"),
   birthdate: z
     .string()
-    .refine((val) => !isNaN(Date.parse(val)), "Birthdate is required")
-    .transform((val) => new Date(val)),
+    .refine((val) => !isNaN(Date.parse(val)), "Birthdate is required"),
 });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;

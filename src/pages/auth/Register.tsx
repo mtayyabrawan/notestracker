@@ -32,7 +32,7 @@ function Register() {
 
   return (
     <form
-      className="my-20 w-[30rem] space-y-6 rounded-lg p-4 text-sm shadow-[0px_0px_10px_0px_var(--color-neutral-500)] ring-[0.5px] ring-neutral-900"
+      className="my-20 w-[35rem] space-y-3 rounded-lg p-4 text-sm shadow-[0px_0px_10px_0px_var(--color-neutral-500)] ring-[0.5px] ring-neutral-900"
       onSubmit={handleSubmit(formSubmit)}
       noValidate
     >
@@ -66,7 +66,7 @@ function Register() {
           )}
           <input
             type="text"
-            id="usernae"
+            id="username"
             autoComplete="off"
             {...register("username")}
             className={`w-full rounded-md p-1.5 text-center ring-[0.5px] focus-visible:outline-hidden ${errors.username ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
@@ -83,13 +83,15 @@ function Register() {
               {errors.gender.message}
             </span>
           )}
-          <input
-            type="password"
+          <select
             id="gender"
-            autoComplete="off"
             {...register("gender")}
-            className={`w-full rounded-md p-1.5 text-center ring-[0.5px] focus-visible:outline-hidden ${errors.gender ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
-          />
+            className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors.gender ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
         </div>
         <div className="flex w-full flex-col items-center space-y-2">
           <label htmlFor="birthdate" className="w-full">
