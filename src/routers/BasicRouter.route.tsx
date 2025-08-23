@@ -10,6 +10,7 @@ import ForgotPassword from "../pages/auth/ForgotPassword";
 import Contact from "../pages/Contact";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
+import ResetPassword from "../pages/auth/ResetPassword";
 
 function BasicRouter() {
   return (
@@ -28,6 +29,7 @@ function BasicRouter() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Route>
       </Route>
     </Routes>
