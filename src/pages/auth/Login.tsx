@@ -4,8 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "../../schemas/loginSchema";
 import { toast } from "sonner";
 import type { LoginSchema } from "../../schemas/loginSchema";
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { useState } from "react";
 
 function Login() {
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const {
     register,
     handleSubmit,
@@ -20,6 +23,10 @@ function Login() {
     console.log(formdata);
     toast.success("Login successful!");
     reset();
+  }
+
+  function handlePasswordVisibility() {
+    setPasswordVisible((prev) => !prev);
   }
 
   return (
@@ -55,13 +62,26 @@ function Login() {
             {errors.password.message}
           </span>
         )}
-        <input
-          type="password"
-          id="password"
-          autoComplete="off"
-          {...register("password")}
-          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] focus-visible:outline-hidden ${errors.password ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
-        />
+        <div className="relative flex h-fit w-full flex-col justify-center">
+          <input
+            type={passwordVisible ? "text" : "password"}
+            id="password"
+            autoComplete="off"
+            {...register("password")}
+            className={`w-full rounded-md p-1.5 text-center ring-[0.5px] focus-visible:outline-hidden ${errors.password ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
+          />
+          {passwordVisible ? (
+            <IconEye
+              className="absolute right-1.5 h-4 cursor-pointer"
+              onClick={handlePasswordVisibility}
+            />
+          ) : (
+            <IconEyeOff
+              className="absolute right-1.5 h-4 cursor-pointer"
+              onClick={handlePasswordVisibility}
+            />
+          )}
+        </div>
       </div>
       <button
         disabled={isSubmitting}
