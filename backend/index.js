@@ -11,8 +11,16 @@ import notesRouter from "./routes/notes.route.js";
 const app = express();
 
 const port = process.env.PORT;
+const cors_origins = process.env.CORS_ORIGINS;
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(
+  cors({
+    origin: JSON.parse(cors_origins),
+    credentials: true,
+    optionsSuccessStatus: 200,
+  }),
+);
+
 app.use(cookieParser());
 app.use(express.json({ limit: "10kb" }));
 
