@@ -1,6 +1,25 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import otpSchema from "../../schemas/otpSchema";
+import type { OTPSchema } from "../../schemas/otpSchema";
+
 function TwofaVerificationPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(otpSchema),
+  });
+  async function formSubmit(data: OTPSchema) {
+    console.log(data);
+  }
   return (
-    <form className="w-96 space-y-6 rounded-lg p-4 text-sm shadow-[0px_0px_10px_0px_var(--color-neutral-500)] ring-[0.5px] ring-neutral-900">
+    <form
+      className="w-96 space-y-6 rounded-lg p-4 text-sm shadow-[0px_0px_10px_0px_var(--color-neutral-500)] ring-[0.5px] ring-neutral-900"
+      noValidate
+      onSubmit={handleSubmit(formSubmit)}
+    >
       <h1 className="text-center text-lg font-medium">
         Two-Factor Authentication
       </h1>
@@ -10,32 +29,61 @@ function TwofaVerificationPage() {
       <div className="mx-auto my-6 grid w-[95%] grid-cols-6 grid-rows-1 gap-2">
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("1", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["1"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
+
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("2", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["2"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
+
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("3", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["3"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
+
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("4", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["4"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
+
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("5", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["5"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
+
         <input
           type="number"
-          className="w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden"
+          maxLength={1}
+          inputMode="numeric"
+          autoComplete="off"
+          {...register("6", { valueAsNumber: true })}
+          className={`w-full rounded-md p-1.5 text-center ring-[0.5px] ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)] focus-visible:outline-hidden ${errors["6"] ? "ring-red-500" : "ring-neutral-900"}`}
         />
       </div>
       <button
         type="submit"
-        className="w-full cursor-pointer rounded-md bg-neutral-500 p-2 text-white focus-visible:outline-hidden"
+        className="w-full cursor-pointer rounded-md bg-neutral-700 p-2 text-white shadow-[0px_0px_5px_0px_var(--color-neutral-700)] hover:bg-neutral-800 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:bg-neutral-500"
       >
         Verify
       </button>
