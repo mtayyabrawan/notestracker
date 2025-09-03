@@ -11,6 +11,7 @@ import Contact from "../pages/Contact";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
 import ResetPassword from "../pages/auth/ResetPassword";
+import TwofaVerificationPage from "../pages/auth/TwofaVerificationPage";
 
 function BasicRouter() {
   return (
@@ -30,6 +31,7 @@ function BasicRouter() {
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="2fa-verification" element={<TwofaVerificationPage />} />
         </Route>
       </Route>
     </Routes>
