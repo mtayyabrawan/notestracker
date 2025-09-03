@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { LoginSchema } from "../../schemas/loginSchema";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useState } from "react";
+import authAPI from "../../api/auth.api";
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -20,9 +21,15 @@ function Login() {
   });
 
   async function formSubmit(formdata: LoginSchema) {
-    console.log(formdata);
-    toast.success("Login successful!");
+    const res = await authAPI.loginUser(formdata);
     reset();
+    if (!res.resStatus) {
+      toast.error(res.error);
+      return
+    }
+    if (!res.twoFA) toast.success("Login successful!");
+    toast.info("2FA Required");
+    return
   }
 
   function handlePasswordVisibility() {
