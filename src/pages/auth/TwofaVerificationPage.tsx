@@ -2,8 +2,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import otpSchema from "../../schemas/otpSchema";
 import type { OTPSchema } from "../../schemas/otpSchema";
+import twofaAPI from "../../api/2fa.api";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 function TwofaVerificationPage() {
+  const navigator = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -13,9 +18,18 @@ function TwofaVerificationPage() {
   } = useForm<OTPSchema>({
     resolver: zodResolver(otpSchema),
   });
+
   async function formSubmit(data: OTPSchema) {
-    console.log(data);
+    const response = await twofaAPI.verifyOTP(
+      `${data["1"]}${data["2"]}${data["3"]}${data["4"]}${data["5"]}${data["6"]}`,
+    );
     reset();
+    if (!response.resStatus) {
+      toast.error(response.error);
+      return;
+    }
+    toast.success("Login successful");
+    navigator("/");
   }
 
   function updateFocus(e: React.InputEvent<HTMLInputElement>) {
@@ -140,7 +154,7 @@ function TwofaVerificationPage() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full cursor-pointer rounded-md bg-neutral-700 p-2 text-white shadow-[0px_0px_5px_0px_var(--color-neutral-700)] hover:bg-neutral-800 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:bg-neutral-500"
+        className="w-full cursor-pointer rounded-md bg-neutral-700 p-2 text-white shadow-[0px_0px_5px_0px_var(--color-neutral-700)] hover:bg-neutral-800 focus-visible:outline-hidden disabled:animate-pulse disabled:cursor-not-allowed disabled:bg-neutral-500"
       >
         Verify
       </button>
