@@ -10,7 +10,7 @@ function TwofaVerificationPage() {
     setValue,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm({
+  } = useForm<OTPSchema>({
     resolver: zodResolver(otpSchema),
   });
   async function formSubmit(data: OTPSchema) {
@@ -49,7 +49,7 @@ function TwofaVerificationPage() {
     const pastedData = e.clipboardData.getData("text");
     if (pastedData.length === 6 && /^\d+$/.test(pastedData)) {
       [...pastedData].forEach((char, index) => {
-        setValue(`${index + 1}`, Number(char));
+        setValue(`${index + 1}` as keyof OTPSchema, Number(char));
       });
       verifyBtn.focus();
       verifyBtn.click();
