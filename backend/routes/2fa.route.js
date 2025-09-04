@@ -94,11 +94,11 @@ twoFARouter.post(
     if (user.twoFA === "enabled")
       return res
         .status(400)
-        .json({ resStatus: false, message: "2FA is already enabled" });
+        .json({ resStatus: false, error: "2FA is already enabled" });
     if (user.twoFA === "disabled")
       return res
         .status(400)
-        .json({ resStatus: false, message: "2FA is not enabled" });
+        .json({ resStatus: false, error: "2FA is not enabled" });
     const { otpCode } = req.body;
     const user2FA = await TwoFA.findOne({ userId: user._id });
     const decryptedSecret = decrypt(user2FA.secret);
@@ -110,7 +110,7 @@ twoFARouter.post(
     if (!verified)
       return res
         .status(400)
-        .json({ resStatus: false, message: "Invalid OTP code" });
+        .json({ resStatus: false, error: "Invalid OTP code" });
     user.twoFA = "enabled";
     user2FA.status = "verified";
     await user2FA.save();
@@ -176,7 +176,7 @@ twoFARouter.post(
     if (user.twoFA !== "enabled")
       return res
         .status(400)
-        .json({ resStatus: false, message: "2FA is not enabled" });
+        .json({ resStatus: false, error: "2FA is not enabled" });
     const user2FA = await TwoFA.findOne({ userId: user._id });
     const decryptedSecret = decrypt(user2FA.secret);
     const verified = speakeasy.totp.verify({
@@ -187,7 +187,7 @@ twoFARouter.post(
     if (!verified)
       return res
         .status(400)
-        .json({ resStatus: false, message: "Invalid OTP code" });
+        .json({ resStatus: false, error: "Invalid OTP code" });
     const notestraker_login_token = genLoginToken(
       user._id.toString(),
       user.email,
