@@ -20,15 +20,15 @@ function Register() {
     reset,
     formState: { isSubmitting, errors },
   } = useForm({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       username: "",
       email: "",
       password: "",
-      gender: "",
+      gender: "male" as const,
       birthdate: "",
     },
-    resolver: zodResolver(registerSchema),
   });
 
   async function formSubmit(formdata: RegisterSchema) {
