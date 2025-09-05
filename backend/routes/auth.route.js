@@ -121,8 +121,8 @@ authRouter.post(
               .status(500)
               .json({ resStatus: false, error: error.message });
           return res.json({
-            resStatus: true,
-            message:
+            resStatus: false,
+            error:
               "Your account not verified. verify it by clicking the link sent to your email now",
           });
         },
