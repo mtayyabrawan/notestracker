@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import loginSchema from "../../schemas/loginSchema";
@@ -10,6 +10,9 @@ import authAPI from "../../api/auth.api";
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const navigator = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -25,11 +28,11 @@ function Login() {
     reset();
     if (!res.resStatus) {
       toast.error(res.error);
-      return
+      return;
     }
     if (!res.twoFA) toast.success("Login successful!");
-    toast.info("2FA Required");
-    return
+    navigator("/auth/2fa-verification");
+    return;
   }
 
   function handlePasswordVisibility() {
@@ -57,6 +60,7 @@ function Login() {
           id="email"
           autoComplete="off"
           {...register("email")}
+          autoFocus
           className={`w-full rounded-md p-1.5 text-center ring-[0.5px] focus-visible:outline-hidden ${errors.email ? "ring-red-500 focus-visible:shadow-[0px_0px_8px_0px_var(--color-red-700)]" : "ring-neutral-900 focus-visible:shadow-[0px_0px_8px_0px_var(--color-neutral-700)]"}`}
         />
       </div>

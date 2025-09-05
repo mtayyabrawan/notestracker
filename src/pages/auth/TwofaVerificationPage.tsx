@@ -29,7 +29,9 @@ function TwofaVerificationPage() {
       return;
     }
     toast.success("Login successful");
-    navigator("/");
+    setTimeout(() => {
+      navigator("/");
+    }, 2000);
   }
 
   function updateFocus(e: React.InputEvent<HTMLInputElement>) {
