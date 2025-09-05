@@ -38,6 +38,19 @@ async function registerUser(data: RegisterSchema) {
   });
 }
 
-const authAPI = { loginUser, registerUser, forgotPassword, resetPassword };
+async function verifyEmail(token: string) {
+  return await errohan(`${api_uri}/auth/verify-email/${token}`, {
+    method: "GET",
+    credentials: true,
+  });
+}
+
+const authAPI = {
+  loginUser,
+  registerUser,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+};
 
 export default authAPI;
