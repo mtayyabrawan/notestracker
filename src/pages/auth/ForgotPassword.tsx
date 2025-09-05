@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import forgotPasswordSchema, {
   type ForgotPasswordSchema,
 } from "../../schemas/forgotPasswordSchema";
+import authAPI from "../../api/auth.api";
 
 function ForgotPassword() {
   const {
@@ -17,8 +18,12 @@ function ForgotPassword() {
   });
 
   async function formSubmit(formdata: ForgotPasswordSchema) {
-    console.log(formdata);
-    toast.success("Email sent!");
+    const res = await authAPI.forgotPassword(formdata);
+    if (!res.resStatus) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Password reset link sent to your email");
     reset();
   }
 
