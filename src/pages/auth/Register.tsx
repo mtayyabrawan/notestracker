@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -7,9 +7,13 @@ import { useState } from "react";
 import registerSchema, {
   type RegisterSchema,
 } from "../../schemas/registerSchema";
+import authAPI from "../../api/auth.api";
 
 function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const navigator = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -28,9 +32,14 @@ function Register() {
   });
 
   async function formSubmit(formdata: RegisterSchema) {
-    console.log(formdata);
-    toast.success("Registration successful!");
+    const res = await authAPI.registerUser(formdata);
     reset();
+    if (!res.resStatus) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Registration successful!");
+    navigator("/auth/login");
   }
 
   function handlePasswordVisibility() {
