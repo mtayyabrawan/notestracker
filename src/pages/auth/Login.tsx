@@ -30,7 +30,11 @@ function Login() {
       toast.error(res.error);
       return;
     }
-    if (!res.twoFA) toast.success("Login successful!");
+    if (!res.twoFA) {
+      toast.success("Login successful!");
+      navigator("/");
+      return;
+    }
     navigator("/auth/2fa-verification");
     return;
   }
