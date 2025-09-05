@@ -1,14 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import resetPasswordSchema, {
   type ResetPasswordSchema,
 } from "../../schemas/resetPasswordSchema";
+import { useNavigate, useParams } from "react-router";
+import { isValidJWT } from "zod/v4/core";
+import authAPI from "../../api/auth.api";
 
 function ResetPassword() {
+  const { resetToken } = useParams();
+
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const navigator = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -20,14 +29,27 @@ function ResetPassword() {
   });
 
   async function formSubmit(formdata: ResetPasswordSchema) {
-    console.log(formdata);
-    toast.success("Password reset successfully!");
+    const res = await authAPI.resetPassword(formdata, resetToken as string);
     reset();
+    if (!res.resStatus) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Password reset successfully!");
   }
 
   function handlePasswordVisibility() {
     setPasswordVisible((prev) => !prev);
   }
+
+  useEffect(() => {
+    if (!isValidJWT(resetToken as string)) {
+      toast.error("Invalid password reset request");
+      setTimeout(() => {
+        navigator("/");
+      }, 2000);
+    }
+  }, [resetToken]);
 
   return (
     <form
