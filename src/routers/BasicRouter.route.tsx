@@ -1,18 +1,28 @@
 import { Route, Routes } from "react-router";
+
 import BasicLayout from "../layouts/BasicLayout";
 import AuthLayout from "../layouts/AuthLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
+
 import Home from "../pages/Home";
 import About from "../pages/About";
-import Login from "../pages/auth/Login";
-import Register from "../pages/auth/Register";
-import NotFound from "../pages/NotFound";
-import ForgotPassword from "../pages/auth/ForgotPassword";
 import Contact from "../pages/Contact";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
+import NotFound from "../pages/NotFound";
+
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
+import VerifyEmail from "../pages/auth/VerifyEmail";
+import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import TwofaVerificationPage from "../pages/auth/TwofaVerificationPage";
-import VerifyEmail from "../pages/auth/VerifyEmail";
+
+import Profile from "../pages/dashboard/Profile";
+import Setting from "../pages/dashboard/Setting";
+import Notes from "../pages/dashboard/Notes";
+import Note from "../pages/dashboard/Note";
+import AddNote from "../pages/dashboard/AddNote";
 
 function BasicRouter() {
   return (
@@ -40,6 +50,16 @@ function BasicRouter() {
             element={<ResetPassword />}
           />
           <Route path="2fa-verification" element={<TwofaVerificationPage />} />
+        </Route>
+      </Route>
+      <Route path="/dashboard">
+        <Route index element={<NotFound />} />
+        <Route element={<DashboardLayout />}>
+          <Route path="add-note" element={<AddNote />} />
+          <Route path="notes" element={<Notes />} />
+          <Route path="notes/:noteSlug" element={<Note />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Setting />} />
         </Route>
       </Route>
     </Routes>
