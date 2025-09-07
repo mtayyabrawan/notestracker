@@ -5,6 +5,7 @@ import type { LoginSchema } from "../schemas/loginSchema";
 import type { ForgotPasswordSchema } from "../schemas/forgotPasswordSchema";
 import type { ResetPasswordSchema } from "../schemas/resetPasswordSchema";
 import type { RegisterSchema } from "../schemas/registerSchema";
+import type { ChangePasswordSchema } from "../schemas/changePasswordSchema";
 
 async function loginUser(credentials: LoginSchema) {
   return await errohan(`${api_uri}/auth/login`, {
@@ -45,12 +46,21 @@ async function verifyEmail(token: string) {
   });
 }
 
+async function changePassword(data: ChangePasswordSchema) {
+  return errohan(`${api_uri}/auth/change-password`, {
+    method: "POST",
+    body: { oldPassword: data.password, newPassword: data.newPassword },
+    credentials: true,
+  });
+}
+
 const authAPI = {
   loginUser,
   registerUser,
   forgotPassword,
   resetPassword,
   verifyEmail,
+  changePassword,
 };
 
 export default authAPI;

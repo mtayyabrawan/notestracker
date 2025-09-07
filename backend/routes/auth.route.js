@@ -352,11 +352,11 @@ authRouter.post(
     if (!compareOldPassword)
       return res
         .status(401)
-        .json({ resStatus: false, error: "Invalid old password" });
+        .json({ resStatus: false, error: "Invalid current password" });
     if (compareNewPassword)
       return res.status(400).json({
         resStatus: false,
-        error: "New password cannot be same as old password",
+        error: "New password cannot be same as current password",
       });
     user.password = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(10));
     await user.save();
