@@ -13,10 +13,10 @@ function Sidebar() {
   const [expand, setExpand] = useState(true);
   return (
     <div
-      className={`h-full overflow-x-hidden overflow-y-auto py-5 shadow-[2px_0px_4px_-2px_black] ${expand ? "w-[15%] px-2" : "w-[4%]"}`}
+      className={`relative h-full overflow-x-hidden overflow-y-auto pb-5 shadow-[2px_0px_4px_-2px_black] ${expand ? "w-[15%] px-2" : "w-[4%]"}`}
     >
       <div
-        className={`flex w-full items-center ${expand ? "justify-end" : "justify-center"}`}
+        className={`sticky top-0 flex w-full items-center border-b bg-white py-2 ${expand ? "justify-end" : "justify-center"}`}
       >
         {expand ? (
           <IconLayoutSidebarLeftCollapse
@@ -32,7 +32,7 @@ function Sidebar() {
           />
         )}
       </div>
-      <nav className="mt-5 flex flex-col items-start justify-start gap-2 border-t pt-4 text-sm">
+      <nav className="mt-5 flex flex-col items-start justify-start gap-2 text-sm">
         <NavLink
           className={`flex w-full items-center ${expand ? "justify-start gap-3 rounded-md px-3 py-1 hover:bg-neutral-400" : "justify-center gap-0"}`}
           to="profile"
@@ -76,7 +76,6 @@ function Sidebar() {
           <span hidden={!expand}>Settings</span>
         </Link>
       </nav>
-      <div></div>
     </div>
   );
 }
