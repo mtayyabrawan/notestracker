@@ -433,4 +433,20 @@ authRouter.delete(
   }),
 );
 
+authRouter.get(
+  "/get-login",
+  verifyLogin,
+  asyncWrapper(async (req, res) => {
+    const userData = await User.findById(req.user.id).select([
+      "-__v",
+      "-_id",
+      "-password",
+    ]);
+    return setTimeout(
+      () => res.status(200).json({ resStatus: true, userData }),
+      5000,
+    );
+  }),
+);
+
 export default authRouter;
