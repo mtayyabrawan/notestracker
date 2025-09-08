@@ -62,6 +62,13 @@ async function deleteAccount(data: ResetPasswordSchema) {
   });
 }
 
+async function getLogin() {
+  return errohan(`${api_uri}/auth/get-login`, {
+    method: "GET",
+    credentials: true,
+  });
+}
+
 const authAPI = {
   loginUser,
   registerUser,
@@ -70,6 +77,7 @@ const authAPI = {
   verifyEmail,
   changePassword,
   deleteAccount,
+  getLogin,
 };
 
 export default authAPI;

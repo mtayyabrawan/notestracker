@@ -442,10 +442,7 @@ authRouter.get(
       "-_id",
       "-password",
     ]);
-    return setTimeout(
-      () => res.status(200).json({ resStatus: true, userData }),
-      5000,
-    );
+    res.status(200).json({ resStatus: true, userData });
   }),
 );
 
