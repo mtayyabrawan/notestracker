@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
-function DeleteModal({ handleModal }) {
+function DeleteModal({ handleModal }: { handleModal: any }) {
   const navigator = useNavigate();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
