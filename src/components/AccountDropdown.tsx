@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import authAPI from "../api/auth.api";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 function AccountDropdown() {
   const [userData, setUserData] = useState<{
@@ -74,6 +74,14 @@ function AccountDropdown() {
     };
   }, [dropdown]);
 
+  const [isHome, setHome] = useState(false);
+
+  useEffect(() => {
+    if (!window.location.pathname.startsWith("/dashboard")) {
+      setHome(true);
+    }
+  }, []);
+
   return (
     <div className="relative text-sm" ref={dropdownRef}>
       <button
@@ -91,6 +99,16 @@ function AccountDropdown() {
           >
             Logout
           </button>
+          {isHome === true ? (
+            <Link
+              to="/dashboard/profile"
+              className="w-full rounded-sm bg-neutral-500 py-1.5 text-center"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <></>
+          )}
         </div>
       )}
     </div>
