@@ -5,6 +5,7 @@ import {
 } from "@tabler/icons-react";
 import ChangePassword from "./ChangePassword";
 import DeleteAccount from "./DeleteAccount";
+import TwoFaSettings from "./TwoFaSettings";
 
 function AccountSettings() {
   const [open, setOpen] = useState(true);
@@ -22,6 +23,7 @@ function AccountSettings() {
       {open && (
         <>
           <ChangePassword />
+          <TwoFaSettings />
           <DeleteAccount />
         </>
       )}
