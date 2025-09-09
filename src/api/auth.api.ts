@@ -69,6 +69,13 @@ async function getLogin() {
   });
 }
 
+async function logout() {
+  return errohan(`${api_uri}/auth/logout`, {
+    method: "GET",
+    credentials: true,
+  });
+}
+
 const authAPI = {
   loginUser,
   registerUser,
@@ -78,6 +85,7 @@ const authAPI = {
   changePassword,
   deleteAccount,
   getLogin,
+  logout,
 };
 
 export default authAPI;

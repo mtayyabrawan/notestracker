@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import AccountDropdown from "../AccountDropdown";
 
 function DashboardNavbar() {
   return (
@@ -7,7 +8,7 @@ function DashboardNavbar() {
         <img src="/notebook.svg" alt="logo" className="h-8 w-8" />
         <span className="text-lg font-semibold">Notestracker</span>
       </Link>
-      <nav className="text-sm">Account</nav>
+      <AccountDropdown />
     </header>
   );
 }
