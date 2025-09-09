@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import authAPI from "../api/auth.api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -53,8 +53,29 @@ function AccountDropdown() {
     toast.success(res.message);
   }
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setDropdown(false);
+      }
+    }
+    if (dropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdown]);
+
   return (
-    <div className="relative text-sm">
+    <div className="relative text-sm" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className="flex cursor-pointer items-center justify-center gap-1 rounded-sm bg-neutral-700 px-2 py-1.5 focus-visible:outline-hidden"
