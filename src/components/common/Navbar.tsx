@@ -6,7 +6,7 @@ import AccountDropdown from "../AccountDropdown";
 function Navbar() {
   const { isLoggedIn } = useLogin();
   return (
-    <header className="grid grid-cols-3 grid-rows-1 bg-neutral-950 px-4 py-3 text-neutral-200">
+    <header className="mx-auto grid max-w-[1540px] grid-cols-3 grid-rows-1 bg-neutral-950 px-4 py-3 text-neutral-200">
       <Link to="/" className="flex items-center gap-2">
         <img src="/notebook.svg" alt="logo" className="h-8 w-8" />
         <span className="text-lg font-semibold">Notestracker</span>

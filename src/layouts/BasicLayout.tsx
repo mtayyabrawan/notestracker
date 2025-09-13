@@ -8,7 +8,7 @@ function BasicLayout() {
     <div className="w-full">
       <Toaster position="top-center" theme="system" richColors={true} />
       <Navbar />
-      <main className="min-h-[calc(100vh-7.5rem))] w-full">
+      <main className="mx-auto min-h-[calc(100vh-7.5rem))] w-full max-w-[1540px]">
         <Outlet />
       </main>
       <AdvancedFooter />

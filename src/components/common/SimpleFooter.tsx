@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 function SimpleFooter() {
   return (
-    <footer className="flex w-full items-center justify-between bg-neutral-400 p-2 text-neutral-950">
+    <footer className="mx-auto flex w-full max-w-[1540px] items-center justify-between bg-neutral-400 p-2 text-neutral-950">
       <div className="font-medium">
         <Link to="/" className="flex items-center space-x-1">
           <img src="/notebook.svg" alt="logo" className="h-5 w-5" />

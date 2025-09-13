@@ -10,7 +10,7 @@ import {
 
 function AdvancedFooter() {
   return (
-    <footer className="flex flex-col gap-3 bg-neutral-800 p-2 text-neutral-300">
+    <footer className="mx-auto flex max-w-[1540px] flex-col gap-3 bg-neutral-800 p-2 text-neutral-300">
       <div className="grid-row-1 grid grid-cols-2">
         <div className="flex items-center space-x-0.5">
           <a href="https://www.linkedin.com/in/mtayyabrawan" target="_blank">
