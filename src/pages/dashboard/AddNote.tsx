@@ -1,19 +1,34 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import noteSchema, { type NoteSchema } from "../../schemas/noteSchema";
+import notesAPI from "../../api/notes.api";
+import { toast } from "sonner";
+import useNotes from "../../hooks/useNotes";
 
 function AddNote() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(noteSchema),
     defaultValues: { title: "", tag: "", content: "" },
   });
-  async function formSubmit(data: NoteSchema) {
-    console.log(data);
+
+  const { updateNotes } = useNotes();
+
+  async function formSubmit(formdata: NoteSchema) {
+    const res = await notesAPI.createNote(formdata);
+    reset();
+    if (!res.resStatus) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("New note added successfully");
+    updateNotes();
   }
+
   return (
     <div className="mb-10 h-full w-full space-y-6 p-4">
       <h1 className="text-center text-xl font-medium">Create a new note</h1>
