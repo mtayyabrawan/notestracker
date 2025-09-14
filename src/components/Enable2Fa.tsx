@@ -12,7 +12,7 @@ function Enable2Fa({
   secret,
   qrcode,
 }: {
-  handleModal: any;
+  handleModal: () => void;
   secret: string;
   qrcode: string;
 }) {
@@ -86,7 +86,7 @@ function Enable2Fa({
   }
 
   return (
-    <div className="fixed top-0 left-0 z-50 h-full w-full bg-neutral-100/30 backdrop-blur-[1px]">
+    <div className="fixed top-0 left-1/2 z-50 h-full w-full max-w-[1540px] -translate-x-1/2 bg-neutral-100/30 backdrop-blur-[1px]">
       <form
         className="mx-auto mt-5 w-96 space-y-6 rounded-lg bg-neutral-200 p-4 text-sm shadow-[0px_0px_10px_0px_var(--color-neutral-500)] ring-[0.5px] ring-neutral-900"
         noValidate

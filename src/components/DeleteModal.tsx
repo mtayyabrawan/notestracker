@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
-function DeleteModal({ handleModal }: { handleModal: any }) {
+function DeleteModal({ handleModal }: { handleModal: () => void }) {
   const navigator = useNavigate();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -40,7 +40,7 @@ function DeleteModal({ handleModal }: { handleModal: any }) {
   }
 
   return (
-    <div className="fixed top-0 left-0 h-full w-full bg-neutral-100/30 backdrop-blur-[1px]">
+    <div className="fixed top-0 left-1/2 h-full w-full max-w-[1540px] -translate-x-1/2 bg-neutral-100/30 backdrop-blur-[1px]">
       <form
         className="mx-auto mt-32 h-fit w-[30%] space-y-4 rounded-md bg-neutral-200 p-4 text-xs ring-[1px]"
         noValidate

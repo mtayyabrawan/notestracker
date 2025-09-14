@@ -12,7 +12,7 @@ function TwoFaModal({
   handleModal,
   status,
 }: {
-  handleModal: any;
+  handleModal: () => void;
   status: string;
 }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -70,7 +70,7 @@ function TwoFaModal({
           qrcode={twoFaData.qrcode}
         />
       )}
-      <div className="fixed top-0 left-0 h-full w-full bg-neutral-100/30 backdrop-blur-[1px]">
+      <div className="fixed top-0 left-1/2 h-full w-full max-w-[1540px] -translate-x-1/2 bg-neutral-100/30 backdrop-blur-[1px]">
         <form
           className="mx-auto mt-32 h-fit w-[30%] space-y-4 rounded-md bg-neutral-200 p-4 text-xs ring-[1px]"
           noValidate
