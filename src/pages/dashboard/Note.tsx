@@ -7,6 +7,7 @@ import Loader from "../../components/Loader";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import useNotes from "../../hooks/useNotes";
 import UpdateNote from "../../components/UpdateNote";
+import validator from "validator";
 
 function Note() {
   const { noteSlug } = useParams();
@@ -34,6 +35,13 @@ function Note() {
   const navigator = useNavigate();
 
   useEffect(() => {
+    if (!validator.isMongoId(noteSlug)) {
+      toast.error("No note found!");
+      setTimeout(() => {
+        navigator("/dashboard/notes");
+      }, 3000);
+      return;
+    }
     notesAPI.getNoteById(noteSlug as string).then((res) => {
       if (!res.resStatus) {
         toast.error(res.error);
