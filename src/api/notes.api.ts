@@ -26,6 +26,20 @@ async function createNote(data: NoteSchema) {
   });
 }
 
-const notesAPI = { getNotes, createNote, deleteNotes };
+async function getNoteById(id: string) {
+  return errohan(`${api_uri}/notes/${id}`, {
+    method: "GET",
+    credentials: true,
+  });
+}
+
+async function deleteById(id: string) {
+  return errohan(`${api_uri}/notes/${id}`, {
+    method: "DELETE",
+    credentials: true,
+  });
+}
+
+const notesAPI = { getNotes, createNote, deleteNotes, getNoteById, deleteById };
 
 export default notesAPI;

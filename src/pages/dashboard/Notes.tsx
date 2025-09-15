@@ -3,7 +3,6 @@ import useNotes from "../../hooks/useNotes";
 
 function Notes() {
   const { notes } = useNotes();
-  console.log(notes);
   return (
     <div className="h-full w-full space-y-4 p-4">
       <h1 className="text-center text-xl font-medium">Your Notes</h1>
