@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import notesAPI from "../../api/notes.api";
@@ -64,6 +64,17 @@ function Note() {
     setUpdate((prev) => !prev);
   }
 
+  const currentIndex = useMemo(
+    () => notes.findIndex((n) => n._id === note._id),
+    [notes, note._id],
+  );
+
+  const prevNote = currentIndex > 0 ? notes[currentIndex - 1] : null;
+  const nextNote =
+    currentIndex !== -1 && currentIndex < notes.length - 1
+      ? notes[currentIndex + 1]
+      : null;
+
   return loading ? (
     <Loader />
   ) : (
@@ -82,8 +93,8 @@ function Note() {
       <div className="grid grid-cols-4 grid-rows-1 px-20 py-10">
         <div className="flex items-center justify-center">
           <Link
-            to={`/dashboard/notes/`}
-            className="inline-block rounded-md bg-neutral-800 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-neutral-900"
+            to={`/dashboard/notes/${prevNote?._id}`}
+            className={`${prevNote?._id === undefined ? "hidden" : "inline-block"} rounded-md bg-neutral-800 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-neutral-900`}
           >
             <IconArrowLeft size={18} />
           </Link>
@@ -106,8 +117,8 @@ function Note() {
         </div>
         <div className="flex items-center justify-center">
           <Link
-            to={`/dashboard/notes/`}
-            className="inline-block rounded-md bg-neutral-800 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-neutral-900"
+            to={`/dashboard/notes/${nextNote?._id}`}
+            className={`${nextNote?._id === undefined ? "hidden" : "inline-block"} rounded-md bg-neutral-800 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-neutral-900`}
           >
             <IconArrowRight size={18} />
           </Link>
