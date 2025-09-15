@@ -6,7 +6,7 @@ function SimpleFooter() {
       <div className="font-medium">
         <Link to="/" className="flex items-center space-x-1">
           <img src="/notebook.svg" alt="logo" className="h-5 w-5" />
-          <span>Notestracker</span>
+          <span>NotesTracker</span>
         </Link>
       </div>
       <p className="text-xs">Copyright &copy; {new Date().getFullYear()}</p>

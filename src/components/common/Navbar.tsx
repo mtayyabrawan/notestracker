@@ -9,7 +9,7 @@ function Navbar() {
     <header className="sticky top-0 mx-auto grid max-w-[1540px] grid-cols-3 grid-rows-1 bg-neutral-950 px-4 py-3 text-neutral-200">
       <Link to="/" className="flex items-center gap-2">
         <img src="/notebook.svg" alt="logo" className="h-8 w-8" />
-        <span className="text-lg font-semibold">Notestracker</span>
+        <span className="text-lg font-semibold">NotesTracker</span>
       </Link>
       <nav className="flex items-center justify-center space-x-4 text-sm">
         <Link to="/about">About</Link>
