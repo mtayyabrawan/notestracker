@@ -26,6 +26,14 @@ async function createNote(data: NoteSchema) {
   });
 }
 
+async function updateNote(data: NoteSchema, id: string) {
+  return errohan(`${api_uri}/notes/${id}`, {
+    method: "PUT",
+    credentials: true,
+    body: { title: data.title, content: data.content, tag: data.tag },
+  });
+}
+
 async function getNoteById(id: string) {
   return errohan(`${api_uri}/notes/${id}`, {
     method: "GET",
@@ -40,6 +48,13 @@ async function deleteById(id: string) {
   });
 }
 
-const notesAPI = { getNotes, createNote, deleteNotes, getNoteById, deleteById };
+const notesAPI = {
+  getNotes,
+  createNote,
+  deleteNotes,
+  getNoteById,
+  deleteById,
+  updateNote,
+};
 
 export default notesAPI;

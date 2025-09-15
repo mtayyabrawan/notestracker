@@ -6,6 +6,7 @@ import notesAPI from "../../api/notes.api";
 import Loader from "../../components/Loader";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import useNotes from "../../hooks/useNotes";
+import UpdateNote from "../../components/UpdateNote";
 
 function Note() {
   const { noteSlug } = useParams();
@@ -26,7 +27,9 @@ function Note() {
     date: "",
   });
 
-  const { updateNotes } = useNotes();
+  const [update, setUpdate] = useState(false);
+
+  const { notes, updateNotes } = useNotes();
 
   const navigator = useNavigate();
 
@@ -42,7 +45,7 @@ function Note() {
       setNote(res.note);
       setLoading(false);
     });
-  }, [noteSlug]);
+  }, [noteSlug, notes]);
 
   async function handleDelete() {
     const res = await notesAPI.deleteById(note._id);
@@ -57,10 +60,15 @@ function Note() {
     });
   }
 
+  function handleModal() {
+    setUpdate((prev) => !prev);
+  }
+
   return loading ? (
     <Loader />
   ) : (
     <div className="h-full w-full space-y-6 p-4">
+      {update && <UpdateNote handleModal={handleModal} note={note} />}
       <h1 className="text-center text-xl font-medium">{note.title}</h1>
       <div className="flex items-center justify-between px-5">
         <p className="rounded-sm bg-neutral-500 px-2 py-1 text-sm font-medium text-neutral-100">
@@ -89,7 +97,10 @@ function Note() {
           </button>
         </div>
         <div className="flex items-center justify-center">
-          <button className="cursor-pointer rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-green-600 focus-visible:outline-hidden">
+          <button
+            className="cursor-pointer rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-neutral-100 hover:bg-green-600 focus-visible:outline-hidden"
+            onClick={handleModal}
+          >
             Update
           </button>
         </div>
