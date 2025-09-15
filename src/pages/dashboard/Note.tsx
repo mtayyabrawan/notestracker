@@ -35,7 +35,7 @@ function Note() {
   const navigator = useNavigate();
 
   useEffect(() => {
-    if (!validator.isMongoId(noteSlug)) {
+    if (!validator.isMongoId(noteSlug as string)) {
       toast.error("No note found!");
       setTimeout(() => {
         navigator("/dashboard/notes");
