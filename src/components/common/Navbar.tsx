@@ -1,10 +1,10 @@
 import { IconExternalLink } from "@tabler/icons-react";
 import { Link } from "react-router";
-import useLogin from "../../hooks/useLogin";
+import useAuth from "../../hooks/useAuth";
 import AccountDropdown from "../AccountDropdown";
 
 function Navbar() {
-  const { isLoggedIn } = useLogin();
+  const { isLoggedIn } = useAuth();
   return (
     <header className="sticky top-0 mx-auto grid max-w-[1540px] grid-cols-3 grid-rows-1 bg-neutral-950 px-4 py-3 text-neutral-200">
       <Link to="/" className="flex items-center gap-2">
@@ -14,7 +14,7 @@ function Navbar() {
       <nav className="flex items-center justify-center space-x-4 text-sm">
         <Link to="/about">About</Link>
         <Link to="/contact">Contact</Link>
-        {isLoggedIn === "yes" ? (
+        {isLoggedIn === "true" ? (
           <AccountDropdown />
         ) : (
           <>

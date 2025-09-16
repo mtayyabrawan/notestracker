@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import authAPI from "../api/auth.api";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 function AccountDropdown() {
   const [userData, setUserData] = useState<{
@@ -26,6 +27,8 @@ function AccountDropdown() {
 
   const [dropdown, setDropdown] = useState(false);
 
+  const { updateLogin } = useAuth();
+
   const navigator = useNavigate();
 
   useEffect(() => {
@@ -49,8 +52,9 @@ function AccountDropdown() {
       toast.error(res.error);
       return;
     }
-    navigator("/auth/login");
+    updateLogin("false");
     toast.success(res.message);
+    if (!isHome) navigator("/auth/login");
   }
 
   const dropdownRef = useRef<HTMLDivElement>(null);
