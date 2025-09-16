@@ -6,6 +6,7 @@ import otpSchema from "../schemas/otpSchema";
 import twofaAPI from "../api/2fa.api";
 import { IconCopy } from "@tabler/icons-react";
 import { useRef } from "react";
+import useAuth from "../hooks/useAuth";
 
 function Enable2Fa({
   handleModal,
@@ -26,6 +27,8 @@ function Enable2Fa({
     resolver: zodResolver(otpSchema),
   });
 
+  const { updateUser } = useAuth();
+
   async function formSubmit(data: OTPSchema) {
     const response = await twofaAPI.verify2FA(
       `${data["1"]}${data["2"]}${data["3"]}${data["4"]}${data["5"]}${data["6"]}`,
@@ -36,6 +39,7 @@ function Enable2Fa({
       return;
     }
     toast.success("Two Factor Authentication turned on");
+    updateUser({ twoFA: "enabled" });
     handleModal();
   }
 

@@ -7,9 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 function DeleteModal({ handleModal }: { handleModal: () => void }) {
   const navigator = useNavigate();
+  const { updateLogin } = useAuth();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
@@ -31,6 +33,7 @@ function DeleteModal({ handleModal }: { handleModal: () => void }) {
       return;
     }
     handleModal();
+    updateLogin("false");
     toast.success("Account deleted successfully!");
     setTimeout(() => navigator("/"), 2000);
   }

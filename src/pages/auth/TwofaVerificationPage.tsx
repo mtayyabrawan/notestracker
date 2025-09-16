@@ -6,9 +6,12 @@ import twofaAPI from "../../api/2fa.api";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import LoginWrapper from "../../components/LoginWrapper";
+import useAuth from "../../hooks/useAuth";
 
 function TwofaVerificationPage() {
   const navigator = useNavigate();
+
+  const { fetchUser } = useAuth();
 
   const {
     register,
@@ -29,6 +32,7 @@ function TwofaVerificationPage() {
       toast.error(response.error);
       return;
     }
+    fetchUser();
     toast.success("Login successful");
     setTimeout(() => {
       navigator("/dashboard/profile");

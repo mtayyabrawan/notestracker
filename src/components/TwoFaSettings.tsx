@@ -1,9 +1,9 @@
 import { useState } from "react";
-import useLogin from "../hooks/useLogin";
+import useAuth from "../hooks/useAuth";
 import TwoFaModal from "./TwoFaModal";
 
 function TwoFaSettings() {
-  const { userData } = useLogin();
+  const { userData } = useAuth();
 
   const [twoFaModal, setTwoFaModal] = useState(false);
 

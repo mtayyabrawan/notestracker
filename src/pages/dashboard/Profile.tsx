@@ -3,10 +3,10 @@ import {
   IconGenderFemale,
   IconSquareRoundedCheckFilled,
 } from "@tabler/icons-react";
-import useLogin from "../../hooks/useLogin";
+import useAuth from "../../hooks/useAuth";
 
 function Profile() {
-  const { userData } = useLogin();
+  const { userData } = useAuth();
   return (
     <div className="h-full w-full space-y-2 p-4">
       <h1 className="text-center text-xl font-medium">Profile</h1>

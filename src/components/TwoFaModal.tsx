@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import twofaAPI from "../api/2fa.api";
 import Enable2Fa from "./Enable2Fa";
+import useAuth from "../hooks/useAuth";
 
 function TwoFaModal({
   handleModal,
@@ -27,6 +28,8 @@ function TwoFaModal({
     resolver: zodResolver(resetPasswordSchema),
   });
 
+  const { updateUser } = useAuth();
+
   async function formSubmit(formdata: ResetPasswordSchema) {
     let res;
     if (status === "Disable") {
@@ -41,6 +44,7 @@ function TwoFaModal({
     }
     if (status === "Disable") {
       toast.success("Two Factor Authentication disabled");
+      updateUser({ twoFA: "disabled" });
       handleModal();
     } else
       set2FAData({ modal: true, secret: res.secret, qrcode: res.qrcodeUrl });

@@ -8,11 +8,14 @@ import { IconEye, IconEyeOff } from "@tabler/icons-react";
 import { useState } from "react";
 import authAPI from "../../api/auth.api";
 import LoginWrapper from "../../components/LoginWrapper";
+import useAuth from "../../hooks/useAuth";
 
 function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const navigator = useNavigate();
+
+  const { fetchUser } = useAuth();
 
   const {
     register,
@@ -32,6 +35,7 @@ function Login() {
       return;
     }
     if (!res.twoFA) {
+      fetchUser();
       toast.success("Login successful!");
       navigator("/dashboard/profile");
       return;
