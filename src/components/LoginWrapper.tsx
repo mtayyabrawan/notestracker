@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, type ReactElement } from "react";
-import useLogin from "../hooks/useLogin";
+import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router";
 import Loader from "./Loader";
 
@@ -12,13 +12,13 @@ function LoginWrapper({
   protectionType: "protected" | "unneccessary";
 }) {
   const navigator = useNavigate();
-  const { isLoggedIn } = useLogin();
+  const { isLoggedIn } = useAuth();
   useEffect(() => {
-    if (isLoggedIn === "no") {
+    if (isLoggedIn === "false") {
       if (protectionType === "protected") {
         navigator("/auth/login");
       }
-    } else if (isLoggedIn === "yes") {
+    } else if (isLoggedIn === "true") {
       if (protectionType === "unneccessary") {
         navigator("/dashboard/profile");
       }
