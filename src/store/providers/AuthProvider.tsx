@@ -38,7 +38,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   function updateUser(data: UserData) {
-    setUserData({ ...data, ...userData });
+    setUserData((prev) => ({ ...prev, ...data }));
   }
 
   async function fetchUser() {

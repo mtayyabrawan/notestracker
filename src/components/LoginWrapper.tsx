@@ -12,24 +12,19 @@ function LoginWrapper({
   protectionType: "protected" | "unneccessary";
 }) {
   const navigator = useNavigate();
+
   const { isLoggedIn } = useAuth();
+
   useEffect(() => {
-    if (isLoggedIn === "false") {
-      if (protectionType === "protected") {
-        navigator("/auth/login");
-      }
-    } else if (isLoggedIn === "true") {
-      if (protectionType === "unneccessary") {
-        navigator("/dashboard/profile");
-      }
+    if (isLoggedIn === "false" && protectionType === "protected") {
+      navigator("/auth/login");
+    }
+    if (isLoggedIn === "true" && protectionType === "unneccessary") {
+      navigator("/dashboard/profile");
     }
   }, [isLoggedIn]);
-  return (
-    <>
-      {isLoggedIn === "pending" && <Loader />}
-      {children}
-    </>
-  );
+
+  return <>{isLoggedIn === "pending" ? <Loader /> : children}</>;
 }
 
 export default LoginWrapper;
