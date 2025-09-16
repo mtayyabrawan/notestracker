@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
+  "author": "Muhamad Tayyab <tayyabpasha1918@gmail.com> (https://mtayyabrawan.site)",
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "packageManager": "npm@11.5.2",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
