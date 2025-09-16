@@ -35,7 +35,7 @@ function Login() {
       return;
     }
     if (!res.twoFA) {
-      fetchUser();
+      await fetchUser();
       toast.success("Login successful!");
       navigator("/dashboard/profile");
       return;
