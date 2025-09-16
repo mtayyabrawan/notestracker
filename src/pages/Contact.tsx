@@ -27,7 +27,7 @@ function Contact() {
           </div>
           <div className="flex w-full items-center justify-start gap-4">
             <IconPhone />
-            <a href="mailto:+923141971643@gmail.com" target="_blank">
+            <a href="tel:+923141971643" target="_blank">
               +923141971643
             </a>
           </div>
