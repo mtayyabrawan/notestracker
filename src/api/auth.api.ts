@@ -76,6 +76,23 @@ async function logout() {
   });
 }
 
+async function deleteProfilePicture() {
+  return errohan(`${api_uri}/auth/profile-picture`, {
+    method: "DELETE",
+    credentials: true,
+  });
+}
+
+async function uploadProfilePicture(data: FormData) {
+  const res = await fetch(`${api_uri}/auth/upload-profile-picture`, {
+    method: "POST",
+    body: data,
+    credentials: "include",
+  });
+  const parsedRes = await res.json();
+  return parsedRes;
+}
+
 const authAPI = {
   loginUser,
   registerUser,
@@ -84,6 +101,8 @@ const authAPI = {
   verifyEmail,
   changePassword,
   deleteAccount,
+  deleteProfilePicture,
+  uploadProfilePicture,
   getLogin,
   logout,
 };
