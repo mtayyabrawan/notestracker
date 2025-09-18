@@ -6,12 +6,7 @@ const upload = multer({
   limits: { files: 1, fileSize: 1024 * 1024 },
   fileFilter: function (req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(
-        new multer.MulterError(
-          "LIMIT_UNEXPECTED_FILE",
-          "Only image files are allowed!",
-        ),
-      );
+      return cb(new Error("Invalid format please provide (png, jpg or jpeg)"));
     }
     cb(null, true);
   },

@@ -386,7 +386,6 @@ authRouter.post(
         },
         async (error, result) => {
           if (error) {
-            console.log(error);
             return res
               .status(500)
               .json({ resStatus: false, error: "Upload failed" });
