@@ -27,6 +27,8 @@ const cloudinaryFolder = process.env.CLOUDINARY_FOLDER;
 
 const authRouter = Router();
 
+const defaultProfileImage = process.env.IMAGE_URL;
+
 authRouter.post(
   "/register",
   [
@@ -407,7 +409,7 @@ authRouter.delete(
   verifyLogin,
   asyncWrapper(async (req, res) => {
     const user = await User.findById(req.user.id);
-    if (!user.profilePicture)
+    if (user.profilePicture === defaultProfileImage)
       return res
         .status(400)
         .json({ resStatus: false, error: "No profile picture found" });
@@ -419,8 +421,7 @@ authRouter.delete(
             .status(500)
             .json({ resStatus: false, error: "Delete failed" });
         }
-        user.profilePicture =
-          "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg";
+        user.profilePicture = defaultProfileImage;
         user.save();
         res.status(200).json({
           resStatus: true,
