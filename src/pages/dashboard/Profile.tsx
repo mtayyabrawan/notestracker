@@ -4,9 +4,17 @@ import {
   IconSquareRoundedCheckFilled,
 } from "@tabler/icons-react";
 import useAuth from "../../hooks/useAuth";
+import ImageDropdown from "../../components/ImageDropdown";
+import ImageUploadModal from "../../components/ImageUploadModal";
+import { useState } from "react";
 
 function Profile() {
   const { userData } = useAuth();
+
+  const [modal, setModal] = useState(false);
+  function handleModal() {
+    setModal((prev) => !prev);
+  }
   return (
     <div className="h-full w-full space-y-2 p-4">
       <h1 className="text-center text-xl font-medium">Profile</h1>
@@ -17,6 +25,8 @@ function Profile() {
             alt={userData.username}
             className="h-36 w-36 rounded-full object-cover"
           />
+          <ImageDropdown handleModal={handleModal} />
+          {modal && <ImageUploadModal handleModal={handleModal} />}
         </div>
         <div className="w-full space-y-6">
           <div className="flex w-full items-center justify-start gap-4 pl-5">
